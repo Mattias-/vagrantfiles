@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby:
+
+VAGRANTFILE_API_VERSION = "2"
+
+$script = <<SCRIPT
+date > /tmp/vagrant_provisioned_at
+apt-get --yes --quiet update
+apt-get --yes --quiet upgrade
+apt-get --yes --quiet install curl git vim screen build-essential
+apt-get --yes --quiet install python-dev python-pip ipython
+pip install pep8 pylint virtualenv
+apt-get --yes --quiet install haskell-platform hlint
+su --command "git clone https://github.com/Mattias-/dotfilez.git" vagrant
+su --command "python ./dotfilez/setup_dotfiles.py" vagrant
+SCRIPT
+
+num_machines = 4
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+    config.vm.box = "ubuntu/trusty64"
+    config.vm.provider "virtualbox" do |v|
+      v.memory = 512
+      v.cpus = 1
+    end
+    config.vm.network "private_network", type: "dhcp"
+    config.ssh.forward_agent = true
+    num_machines.times do |i|
+        hostname = "v-trusty-%d" % [(i+1)]
+        config.vm.define :"#{hostname}" do |box|
+            box.vm.hostname = hostname
+            box.vm.provision "shell", inline: $script
+        end
+    end
+end
