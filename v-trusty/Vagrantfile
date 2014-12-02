@@ -3,18 +3,6 @@
 
 VAGRANTFILE_API_VERSION = "2"
 
-$script = <<SCRIPT
-date > /tmp/vagrant_provisioned_at
-apt-get --yes --quiet update
-apt-get --yes --quiet upgrade
-apt-get --yes --quiet install curl git vim screen build-essential
-apt-get --yes --quiet install python-dev python-pip ipython
-pip install pep8 pylint virtualenv
-apt-get --yes --quiet install haskell-platform hlint
-su --command "git clone https://github.com/Mattias-/dotfilez.git" vagrant
-su --command "python ./dotfilez/setup_dotfiles.py" vagrant
-SCRIPT
-
 num_machines = 4
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -29,7 +17,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         hostname = "v-trusty-%d" % [(i+1)]
         config.vm.define :"#{hostname}" do |box|
             box.vm.hostname = hostname
-            box.vm.provision "shell", inline: $script
+            box.vm.provision "shell", path: "setup_ubuntu"
         end
     end
 end
