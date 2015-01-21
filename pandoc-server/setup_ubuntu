@@ -1,0 +1,27 @@
+date > /tmp/time_provisioned
+apt-get --yes --quiet update
+apt-get --yes --quiet upgrade
+
+apt-get --yes --quiet install \
+curl \
+git \
+vim \
+screen \
+build-essential \
+python-dev \
+python-pip \
+ipython
+
+apt-get --yes --quiet install \
+pandoc \
+texlive \
+texlive-latex-extra \
+texlive-bibtex-extra \
+biber \
+python-pygments \
+xzdec
+
+tlmgr init-usertree
+
+su --command "git clone https://github.com/Mattias-/dotfilez.git" vagrant
+su --command "python ./dotfilez/setup_dotfiles.py" vagrant
