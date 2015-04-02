@@ -23,5 +23,10 @@ xzdec
 
 tlmgr init-usertree
 
+pip install virtualenv
+
+curl -sSL https://get.docker.com/ubuntu/ | sudo sh
+gpasswd -a vagrant docker
+
 su --command "git clone https://github.com/Mattias-/dotfilez.git" vagrant
 su --command "python ./dotfilez/setup_dotfiles.py" vagrant
