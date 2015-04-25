@@ -11,13 +11,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       v.memory = 512
       v.cpus = 1
     end
+
     config.vm.network "private_network", type: "dhcp"
+    config.vm.network "forwarded_port", guest: 22, host: 2200, id: "ssh", auto_correct: true
     config.ssh.forward_agent = true
+
+    config.vm.synced_folder ".", "/vagrant", disabled: true
+
+    config.vm.provision "shell", path: "setup_ubuntu.sh"
+
     num_machines.times do |i|
         hostname = "v-trusty-%d" % [(i+1)]
-        config.vm.define :"#{hostname}" do |box|
+        config.vm.define "#{hostname}", primary: (i == 0) do |box|
             box.vm.hostname = hostname
-            box.vm.provision "shell", path: "setup_ubuntu"
         end
     end
 end
